@@ -268,7 +268,7 @@
 
     <div class="scroll-x">
       <table class="sessions" id="yearTable">
-        <thead><tr><th>Year</th><th>Final record</th><th>Points won</th><th>Division</th><th>Finish</th><th>Overall finish</th></tr></thead>
+        <thead><tr><th>Year</th><th>Final record</th><th>Standings after 20 rounds</th><th>Points won</th><th>Day 1</th><th>Day 2</th><th>Division</th><th>Group Finish (Qualifying)</th></tr></thead>
         <tbody id="yearTableBody"></tbody>
       </table>
     </div>
@@ -585,13 +585,23 @@
       var divTxt = y.d || '—';
       var finishTxt = y.rk ? (y.rk + '/' + y.rn) : '—';
       var overallTxt = y.wr ? (y.wr + '/' + y.wn) : '—';
+      var day1Txt = y.d1r ? (y.d1r + '/' + y.d1n) : '—';
+      var day2Sessions = y.s.slice(5);
+      var day2Txt = day2Sessions.length
+        ? fmtRecord(
+            day2Sessions.reduce(function(a,s){return a+s.w;}, 0),
+            day2Sessions.reduce(function(a,s){return a+s.o;}, 0)
+          )
+        : '—';
       tr.innerHTML =
         '<td class="num">' + y.y + '</td>' +
         '<td class="num">' + fmtRecord(y.w, y.o) + '</td>' +
+        '<td class="num">' + overallTxt + '</td>' +
         '<td>' + pct(y.w, y.o) + '</td>' +
+        '<td class="num">' + day1Txt + '</td>' +
+        '<td class="num">' + day2Txt + '</td>' +
         '<td>' + divTxt + '</td>' +
-        '<td class="num">' + finishTxt + '</td>' +
-        '<td class="num">' + overallTxt + '</td>';
+        '<td class="num">' + finishTxt + '</td>';
       tbody.appendChild(tr);
     });
 
