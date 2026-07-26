@@ -84,9 +84,12 @@
   table.sessions td{padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top;}
   table.sessions tr:last-child td{border-bottom:none;}
   table.sessions td.num{font-variant-numeric:tabular-nums;font-weight:600;white-space:nowrap;}
+  table.sessions td.rank{font-weight:700;color:var(--ink-soft);width:28px;}
+  table.sessions td.rec{font-weight:700;font-variant-numeric:tabular-nums;white-space:nowrap;}
+  #top10Section{margin-bottom:40px;}
+  .top10-head{display:flex;align-items:baseline;justify-content:space-between;gap:12px;flex-wrap:wrap;}
+  .top10-more{font-size:13px;font-weight:600;white-space:nowrap;}
   .scroll-x{overflow-x:auto;-webkit-overflow-scrolling:touch;}
-
-  footer{margin-top:36px;padding-top:18px;border-top:1px solid var(--line);font-size:12px;color:var(--ink-soft);}
 
   .viz-root{
     color-scheme:light;
@@ -223,6 +226,31 @@
 
 <div class="wrap">
 
+  <section id="top10Section">
+    <div class="top10-head">
+      <h2 class="section-title">Top 10 finishes of all time</h2>
+      <a class="top10-more" href="top100.html">See the full Top 100 &rarr;</a>
+    </div>
+    <p class="section-lede">Most wins in a single Pinburgh, among players who completed the full 120-game event.</p>
+    <div class="scroll-x">
+      <table class="sessions">
+        <thead><tr><th class="num">#</th><th>Year</th><th>Player</th><th class="num">Record</th><th class="num">Finish</th></tr></thead>
+        <tbody>
+          <tr><td class="rank num">1</td><td class="num">2016</td><td>Keith Elwin</td><td class="rec">95&ndash;25</td><td class="num">1/175</td></tr>
+          <tr><td class="rank num">2</td><td class="num">2017</td><td>Keith Elwin</td><td class="rec">93&ndash;27</td><td class="num">1/247</td></tr>
+          <tr><td class="rank num">3</td><td class="num">2018</td><td>Raymond Davidson</td><td class="rec">93&ndash;27</td><td class="num">1/168</td></tr>
+          <tr><td class="rank num">4</td><td class="num">2025</td><td>Jason Zahler</td><td class="rec">90&ndash;30</td><td class="num">1/90</td></tr>
+          <tr><td class="rank num">5</td><td class="num">2024</td><td>Jason Zahler</td><td class="rec">89&ndash;31</td><td class="num">1/72</td></tr>
+          <tr><td class="rank num">6</td><td class="num">2014</td><td>Lyman Sheats</td><td class="rec">88&ndash;32</td><td class="num">1/99</td></tr>
+          <tr><td class="rank num">7</td><td class="num">2015</td><td>Keith Elwin</td><td class="rec">87&ndash;33</td><td class="num">1/162</td></tr>
+          <tr><td class="rank num">8</td><td class="num">2018</td><td>Keith Elwin</td><td class="rec">87&ndash;33</td><td class="num">2/168</td></tr>
+          <tr><td class="rank num">9</td><td class="num">2014</td><td>Robert Gagno</td><td class="rec">86&ndash;34</td><td class="num">2/99</td></tr>
+          <tr><td class="rank num">10</td><td class="num">2019</td><td>Keith Elwin</td><td class="rec">86&ndash;34</td><td class="num">1/200</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
   <section id="searchSection">
     <div class="search-wrap">
       <input id="searchInput" type="text" placeholder="Name (full or partial) or IFPA #&hellip;" autocomplete="off">
@@ -270,25 +298,6 @@
       </table>
     </div>
   </section>
-
-  <footer>
-    Source: pinburgh.com's official live results pages for every year they've been published
-    (2014–2026 (no 2020–2023, tournament hiatus)). Session records are read directly from each year's per-session table;
-    cumulative and final records are computed by summing session results in order (not read from
-    the page's own running total, which is occasionally inconsistent) &mdash; this matches how the
-    same calculation was verified by hand on the individual player sheets this tool grew out of.
-    Bank/set names are shown when pinburgh.com published them for that session. Identity across
-    years is matched by IFPA number where a player linked one; players without an IFPA number are
-    matched by exact name only, so two different people who share a name and never linked IFPA
-    could appear merged &mdash; check the session detail if a year looks out of place. "Day 1"
-    standing comes from pinburgh.com's own transition-to-divisions page, published right after
-    Session 5, and ranks players across the whole field (ties share a rank); "Final" standing
-    comes from that division's final standings page after Session 10 and ranks players within
-    their division only. Half-point tie scores (e.g. 7&frac12;&ndash;4&frac12;) are read from the
-    page and included in every total. A session marked with <strong>*</strong> means pinburgh.com
-    recorded the player absent for that session and assigned the standard 0&ndash;12 penalty
-    instead of a played result &mdash; that score is still counted in the player's record.
-  </footer>
 </div>
 
 <div class="cmp-tray" id="cmpTray">
