@@ -44,6 +44,12 @@
   h1{font-family:Georgia,"Iowan Old Style",serif;font-weight:600;font-size:clamp(28px,4.4vw,40px);line-height:1.1;margin:0 0 10px;text-wrap:balance;letter-spacing:-0.01em;}
   .hero-sub{font-size:16px;color:var(--ink-soft);max-width:70ch;margin:0;}
   .hero-sub strong{color:var(--ink);font-weight:600;}
+  .data-notice{
+    margin:16px 0 0;padding:10px 14px;max-width:70ch;font-size:14px;
+    background:var(--amber-soft);color:var(--ink);border-radius:8px;
+    border:1px solid var(--amber);
+  }
+  .data-notice strong{font-weight:700;}
 
   h2.section-title{font-family:Georgia,"Iowan Old Style",serif;font-size:20px;font-weight:600;margin:0 0 6px;}
   .section-lede{color:var(--ink-soft);font-size:14px;margin:0 0 20px;max-width:70ch;}
@@ -86,6 +92,7 @@
   table.sessions td.num{font-variant-numeric:tabular-nums;font-weight:600;white-space:nowrap;}
   table.sessions td.rank{font-weight:700;color:var(--ink-soft);width:28px;}
   table.sessions td.rec{font-weight:700;font-variant-numeric:tabular-nums;white-space:nowrap;}
+  #yearTable .grp-end{border-right:1px solid var(--line);}
   #top10Section{margin-top:40px;}
   .top10-head{display:flex;align-items:baseline;justify-content:space-between;gap:12px;flex-wrap:wrap;}
   .top10-more{font-size:13px;font-weight:600;white-space:nowrap;}
@@ -221,6 +228,8 @@
     <p class="hero-sub">Search any player from <strong>2014–2026 (no 2020–2023, tournament hiatus)</strong> and see their year-by-year
       record and session-by-session chart for every year they played. Built from 5030
       player-year entries across 2101 people on pinburgh.com's live results.</p>
+    <p class="data-notice"><strong>Note: this is qualifying data only &mdash; it does not include finals
+      data.</strong> Finals data will be added later.</p>
   </div>
 </header>
 
@@ -293,15 +302,20 @@
       <table class="sessions" id="yearTable">
         <thead>
           <tr>
-            <th>Year</th>
+            <th rowspan="2">Year</th>
+            <th colspan="5" class="grp-end">Both days</th>
+            <th colspan="2" class="grp-end">Day 1</th>
+            <th>Day 2</th>
+          </tr>
+          <tr>
             <th>Final record</th>
             <th>Standings after 20 rounds</th>
             <th>Points won</th>
-            <th>Day 1 record</th>
-            <th>Day 1 standings</th>
-            <th>Day 2 record</th>
             <th>Division</th>
-            <th>Group Finish (Qualifying)</th>
+            <th class="grp-end">Group Finish (Qualifying)</th>
+            <th>Record</th>
+            <th class="grp-end">Standings</th>
+            <th>Record</th>
           </tr>
         </thead>
         <tbody id="yearTableBody"></tbody>
@@ -640,11 +654,11 @@
         '<td class="num">' + fmtRecord(y.w, y.o) + '</td>' +
         '<td class="num">' + overallTxt + '</td>' +
         '<td>' + pct(y.w, y.o) + '</td>' +
-        '<td class="num">' + day1ScoreTxt + '</td>' +
-        '<td class="num">' + day1StandingTxt + '</td>' +
-        '<td class="num">' + day2Txt + '</td>' +
         '<td>' + divTxt + '</td>' +
-        '<td class="num">' + finishTxt + '</td>';
+        '<td class="num grp-end">' + finishTxt + '</td>' +
+        '<td class="num">' + day1ScoreTxt + '</td>' +
+        '<td class="num grp-end">' + day1StandingTxt + '</td>' +
+        '<td class="num">' + day2Txt + '</td>';
       tbody.appendChild(tr);
     });
 
