@@ -489,12 +489,15 @@
   }
 
   function standingTrackHtml(y){
-    if (!y.d1r && !y.rk) return '';
+    if (!y.d1r && !y.rk && !y.wr) return '';
     var day1 = y.d1r
       ? '<span class="val">' + ordinal(y.d1r) + ' <span class="sub">of ' + y.d1n + '</span></span>'
       : '<span class="val">—</span>';
     var fin = y.rk
       ? '<span class="val">' + ordinal(y.rk) + ' <span class="sub">of ' + y.rn + '</span></span>'
+      : '<span class="val">—</span>';
+    var complete = y.wr
+      ? '<span class="val">' + ordinal(y.wr) + ' <span class="sub">of ' + y.wn + '</span></span>'
       : '<span class="val">—</span>';
 
     var arrowCls = 'flat', arrow = '→';
@@ -505,10 +508,20 @@
       else if (finPct > day1Pct + 0.01){ arrowCls = 'down'; arrow = '↘'; }
     }
 
+    var arrowCls2 = 'flat', arrow2 = '→';
+    if (y.d1r && y.wr){
+      var day1Pct2 = (y.d1r - 1) / Math.max(y.d1n - 1, 1);
+      var complPct = (y.wr - 1) / Math.max(y.wn - 1, 1);
+      if (complPct < day1Pct2 - 0.01){ arrowCls2 = 'up'; arrow2 = '↗'; }
+      else if (complPct > day1Pct2 + 0.01){ arrowCls2 = 'down'; arrow2 = '↘'; }
+    }
+
     return '<div class="standing-track">' +
       '<div class="standing-badge"><span class="lbl">Day 1 &middot; Div ' + (y.d1d||'?') + '</span>' + day1 + '</div>' +
       '<div class="standing-arrow ' + arrowCls + '">' + arrow + '</div>' +
       '<div class="standing-badge"><span class="lbl">Final &middot; Div ' + (y.d||'?') + '</span>' + fin + '</div>' +
+      '<div class="standing-arrow ' + arrowCls2 + '">' + arrow2 + '</div>' +
+      '<div class="standing-badge"><span class="lbl">Complete finish</span>' + complete + '</div>' +
     '</div>';
   }
 
