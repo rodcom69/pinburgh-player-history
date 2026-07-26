@@ -86,7 +86,7 @@
   table.sessions td.num{font-variant-numeric:tabular-nums;font-weight:600;white-space:nowrap;}
   table.sessions td.rank{font-weight:700;color:var(--ink-soft);width:28px;}
   table.sessions td.rec{font-weight:700;font-variant-numeric:tabular-nums;white-space:nowrap;}
-  #top10Section{margin-bottom:40px;}
+  #top10Section{margin-top:40px;}
   .top10-head{display:flex;align-items:baseline;justify-content:space-between;gap:12px;flex-wrap:wrap;}
   .top10-more{font-size:13px;font-weight:600;white-space:nowrap;}
   .scroll-x{overflow-x:auto;-webkit-overflow-scrolling:touch;}
@@ -226,6 +226,14 @@
 
 <div class="wrap">
 
+  <section id="searchSection">
+    <div class="search-wrap">
+      <input id="searchInput" type="text" placeholder="Name (full or partial) or IFPA #&hellip;" autocomplete="off">
+    </div>
+    <p class="search-hint">Search by any part of a name, or type an IFPA number for an exact match. Tap the <strong>+</strong> next to a result to add them to a comparison (up to 10). If a name is shared by more than one player across years, they'll show up as separate results (IFPA # shown when known).</p>
+    <div id="results"></div>
+  </section>
+
   <section id="top10Section">
     <div class="top10-head">
       <h2 class="section-title">Top 10 finishes of all time</h2>
@@ -249,14 +257,6 @@
         </tbody>
       </table>
     </div>
-  </section>
-
-  <section id="searchSection">
-    <div class="search-wrap">
-      <input id="searchInput" type="text" placeholder="Name (full or partial) or IFPA #&hellip;" autocomplete="off">
-    </div>
-    <p class="search-hint">Search by any part of a name, or type an IFPA number for an exact match. Tap the <strong>+</strong> next to a result to add them to a comparison (up to 10). If a name is shared by more than one player across years, they'll show up as separate results (IFPA # shown when known).</p>
-    <div id="results"></div>
   </section>
 
   <section id="personView">
@@ -326,6 +326,7 @@
   var searchInput = document.getElementById('searchInput');
   var resultsEl = document.getElementById('results');
   var searchSection = document.getElementById('searchSection');
+  var top10Section = document.getElementById('top10Section');
   var personView = document.getElementById('personView');
   var compareView = document.getElementById('compareView');
   var backBtn = document.getElementById('backBtn');
@@ -395,6 +396,7 @@
   cmpBackBtn.addEventListener('click', function(){
     compareView.style.display = 'none';
     searchSection.style.display = 'block';
+    top10Section.style.display = 'block';
   });
 
   function runSearch(qRaw){
@@ -602,6 +604,7 @@
     });
 
     searchSection.style.display = 'none';
+    top10Section.style.display = 'none';
     compareView.style.display = 'none';
     personView.style.display = 'block';
     window.scrollTo({top:0, behavior:'instant'});
@@ -610,6 +613,7 @@
   backBtn.addEventListener('click', function(){
     personView.style.display = 'none';
     searchSection.style.display = 'block';
+    top10Section.style.display = 'block';
     searchInput.focus();
   });
 
@@ -761,6 +765,7 @@
     });
 
     searchSection.style.display = 'none';
+    top10Section.style.display = 'none';
     personView.style.display = 'none';
     compareView.style.display = 'block';
     window.scrollTo({top:0, behavior:'instant'});
