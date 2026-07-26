@@ -298,6 +298,7 @@
             <th>Standings after 20 rounds</th>
             <th>Points won</th>
             <th>Day 1 record</th>
+            <th>Day 1 standings</th>
             <th>Day 2 record</th>
             <th>Division</th>
             <th>Group Finish (Qualifying)</th>
@@ -626,6 +627,7 @@
             day1Sessions.reduce(function(a,s){return a+s.o;}, 0)
           )
         : '—';
+      var day1StandingTxt = y.d1r ? (y.d1r + '/' + y.d1n) : '—';
       var day2Sessions = y.s.slice(5);
       var day2Txt = day2Sessions.length
         ? fmtRecord(
@@ -639,6 +641,7 @@
         '<td class="num">' + overallTxt + '</td>' +
         '<td>' + pct(y.w, y.o) + '</td>' +
         '<td class="num">' + day1ScoreTxt + '</td>' +
+        '<td class="num">' + day1StandingTxt + '</td>' +
         '<td class="num">' + day2Txt + '</td>' +
         '<td>' + divTxt + '</td>' +
         '<td class="num">' + finishTxt + '</td>';
