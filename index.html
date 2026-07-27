@@ -121,8 +121,8 @@
   .viz-title{font-size:13px;font-weight:700;margin:0 0 10px;color:var(--v-text-primary);}
   .viz-title .div{font-weight:400;color:var(--v-text-secondary);}
 
-  .standing-track{display:flex;align-items:center;gap:8px;margin:0 0 14px;}
-  .standing-badge{flex:1;background:var(--steel-soft);border-radius:8px;padding:7px 10px;}
+  .standing-track{display:flex;align-items:center;gap:8px;row-gap:8px;flex-wrap:wrap;margin:0 0 14px;}
+  .standing-badge{flex:1 1 110px;min-width:0;background:var(--steel-soft);border-radius:8px;padding:7px 10px;}
   .standing-badge .lbl{display:block;font-size:9px;letter-spacing:0.06em;text-transform:uppercase;color:var(--ink-soft);font-weight:700;margin-bottom:2px;}
   .standing-badge .val{display:block;font-size:13px;font-weight:700;color:var(--ink);font-variant-numeric:tabular-nums;}
   .standing-badge .sub{font-size:11px;font-weight:400;color:var(--ink-soft);}
@@ -258,8 +258,9 @@
     <p class="hero-sub">Search any player from <strong>2014–2026 (no 2020–2023, tournament hiatus)</strong> and see their year-by-year
       record and session-by-session chart for every year they played. Built from 5030
       player-year entries across 2100 people on pinburgh.com's live results.</p>
-    <p class="data-notice"><strong>Note: this is qualifying data only &mdash; it does not include finals
-      data.</strong> Finals data will be added later.</p>
+    <p class="data-notice"><strong>Finals bracket data is included for: 2016 (A, C); 2025 (A, B, C); 2026 (A, B, C).</strong>
+      Other years/divisions aren't scraped yet &mdash; those player pages show qualifying (Sessions 1&ndash;10)
+      data only, with no finals badge or bracket detail.</p>
   </div>
 </header>
 
