@@ -650,9 +650,13 @@
       bar.addEventListener('mouseleave', function(){ tip.classList.remove('show'); });
       bar.addEventListener('touchstart', function(){ tip.textContent = label; tip.classList.add('show'); }, {passive:true});
 
+      var lab = document.createElement('span');
+      lab.textContent = 'S' + s.l + (isAbsent ? '*' : '');
+      labelsEl.appendChild(lab);
+
       if (!isAbsent && s.n != null){
         var setKey = year + '_' + s.n;
-        bar.addEventListener('click', function(e){
+        var showBankPopover = function(e){
           e.stopPropagation();
           if (popover.dataset.key === setKey && popover.classList.contains('show')){
             popover.classList.remove('show');
@@ -682,12 +686,14 @@
             popover.appendChild(empty);
           }
           popover.classList.add('show');
-        });
+        };
+        // Full column (not just the thin bar, which can be a few px tall on
+        // a near-6-6 score) and the round label below it are both tap targets.
+        col.style.cursor = 'pointer';
+        col.addEventListener('click', showBankPopover);
+        lab.style.cursor = 'pointer';
+        lab.addEventListener('click', showBankPopover);
       }
-
-      var lab = document.createElement('span');
-      lab.textContent = 'S' + s.l + (isAbsent ? '*' : '');
-      labelsEl.appendChild(lab);
     });
   }
 
