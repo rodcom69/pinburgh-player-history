@@ -51,8 +51,6 @@
   }
   .data-notice strong{font-weight:700;}
 
-  h2.section-title{font-family:Georgia,"Iowan Old Style",serif;font-size:20px;font-weight:600;margin:0 0 6px;}
-  .section-lede{color:var(--ink-soft);font-size:14px;margin:0 0 20px;max-width:70ch;}
   section{margin-bottom:40px;}
 
   .search-wrap{position:relative;margin-bottom:8px;}
@@ -94,9 +92,6 @@
   table.sessions td.rec{font-weight:700;font-variant-numeric:tabular-nums;white-space:nowrap;}
   #yearTable .grp-end{border-right:2px solid var(--ink-soft);}
   #yearTable thead th[colspan]{text-align:center;}
-  #top10Section{margin-top:40px;}
-  .top10-head{display:flex;align-items:baseline;justify-content:space-between;gap:12px;flex-wrap:wrap;}
-  .top10-more{font-size:13px;font-weight:600;white-space:nowrap;}
   .scroll-x{overflow-x:auto;-webkit-overflow-scrolling:touch;}
 
   .viz-root{
@@ -274,81 +269,6 @@
     <div id="results"></div>
   </section>
 
-  <section id="top10Section">
-    <div class="top10-head">
-      <h2 class="section-title">Top 10 finishes of all time</h2>
-      <a class="top10-more" href="top100.html">See the full Top 100 &rarr;</a>
-    </div>
-    <p class="section-lede">Most wins in a single Pinburgh, among players who completed the full 120-game event.</p>
-    <div class="scroll-x">
-      <table class="sessions">
-        <thead><tr><th class="num">#</th><th>Year</th><th>Player</th><th class="num">Final record</th><th class="num">Day 1 record</th><th class="num">Day 2 record</th></tr></thead>
-        <tbody>
-          <tr><td class="rank num">1</td><td class="num">2016</td><td>Keith Elwin</td><td class="rec">95&ndash;25</td><td class="rec">51&ndash;9</td><td class="rec">44&ndash;16</td></tr>
-          <tr><td class="rank num">2</td><td class="num">2017</td><td>Keith Elwin</td><td class="rec">93&ndash;27</td><td class="rec">44&ndash;16</td><td class="rec">49&ndash;11</td></tr>
-          <tr><td class="rank num">2</td><td class="num">2018</td><td>Raymond Davidson</td><td class="rec">93&ndash;27</td><td class="rec">50&ndash;10</td><td class="rec">43&ndash;17</td></tr>
-          <tr><td class="rank num">4</td><td class="num">2025</td><td>Jason Zahler</td><td class="rec">90&ndash;30</td><td class="rec">50&ndash;10</td><td class="rec">40&ndash;20</td></tr>
-          <tr><td class="rank num">5</td><td class="num">2024</td><td>Jason Zahler</td><td class="rec">89&ndash;31</td><td class="rec">55&ndash;5</td><td class="rec">34&ndash;26</td></tr>
-          <tr><td class="rank num">6</td><td class="num">2014</td><td>Lyman Sheats</td><td class="rec">88&ndash;32</td><td class="rec">48&ndash;12</td><td class="rec">40&ndash;20</td></tr>
-          <tr><td class="rank num">7</td><td class="num">2015</td><td>Keith Elwin</td><td class="rec">87&ndash;33</td><td class="rec">44&ndash;16</td><td class="rec">43&ndash;17</td></tr>
-          <tr><td class="rank num">7</td><td class="num">2018</td><td>Keith Elwin</td><td class="rec">87&ndash;33</td><td class="rec">45&ndash;15</td><td class="rec">42&ndash;18</td></tr>
-          <tr><td class="rank num">9</td><td class="num">2014</td><td>Robert Gagno</td><td class="rec">86&ndash;34</td><td class="rec">51&ndash;9</td><td class="rec">35&ndash;25</td></tr>
-          <tr><td class="rank num">9</td><td class="num">2019</td><td>Keith Elwin</td><td class="rec">86&ndash;34</td><td class="rec">52&ndash;8</td><td class="rec">34&ndash;26</td></tr>
-        </tbody>
-      </table>
-    </div>
-
-    <div class="top10-head" style="margin-top:32px;">
-      <h2 class="section-title">Top 10 improvements: Day 1 to Day 2</h2>
-      <a class="top10-more" href="improvements-day1-day2.html">See the full Top 100 &rarr;</a>
-    </div>
-    <p class="section-lede">Biggest point turnarounds from Day 1 (Sessions 1&ndash;5) to Day 2 (Sessions 6&ndash;10), excluding no-shows.</p>
-    <div class="scroll-x">
-      <table class="sessions">
-        <thead><tr><th class="num">#</th><th>Year</th><th>Player</th><th class="num">Day 1 record</th><th class="num">Day 2 record</th><th class="num">Points gained</th></tr></thead>
-        <tbody>
-          <tr><td class="rank num">1</td><td class="num">2017</td><td>Rod Winzinek</td><td class="rec">19&ndash;41</td><td class="rec">42&ndash;18</td><td class="num">+23</td></tr>
-          <tr><td class="rank num">1</td><td class="num">2024</td><td>Therese Edwards</td><td class="rec">10&ndash;50</td><td class="rec">33&ndash;27</td><td class="num">+23</td></tr>
-          <tr><td class="rank num">3</td><td class="num">2014</td><td>Dan Gutchess</td><td class="rec">25&ndash;35</td><td class="rec">47&ndash;13</td><td class="num">+22</td></tr>
-          <tr><td class="rank num">3</td><td class="num">2014</td><td>Robert Sneed</td><td class="rec">20&ndash;40</td><td class="rec">42&ndash;18</td><td class="num">+22</td></tr>
-          <tr><td class="rank num">3</td><td class="num">2015</td><td>Debora Kapke</td><td class="rec">16&ndash;44</td><td class="rec">38&ndash;22</td><td class="num">+22</td></tr>
-          <tr><td class="rank num">3</td><td class="num">2015</td><td>Kevin Grillo</td><td class="rec">14&ndash;46</td><td class="rec">36&ndash;24</td><td class="num">+22</td></tr>
-          <tr><td class="rank num">3</td><td class="num">2018</td><td>Christopher Chow</td><td class="rec">20&ndash;40</td><td class="rec">42&ndash;18</td><td class="num">+22</td></tr>
-          <tr><td class="rank num">3</td><td class="num">2026</td><td>Sarah Wosczyna</td><td class="rec">13&ndash;47</td><td class="rec">35&ndash;25</td><td class="num">+22</td></tr>
-          <tr><td class="rank num">9</td><td class="num">2015</td><td>Luke Hall</td><td class="rec">25&ndash;35</td><td class="rec">46&ndash;14</td><td class="num">+21</td></tr>
-          <tr><td class="rank num">10</td><td class="num">2018</td><td>Neil Oney</td><td class="rec">22&ndash;38</td><td class="rec">42&frac12;&ndash;17&frac12;</td><td class="num">+20&frac12;</td></tr>
-        </tbody>
-      </table>
-    </div>
-
-    <div class="top10-head" style="margin-top:32px;">
-      <h2 class="section-title">Top 10 perfect rounds</h2>
-      <a class="top10-more" href="perfect-rounds.html">See everyone who's had one &rarr;</a>
-    </div>
-    <p class="section-lede">Most all-time 12&ndash;0 sessions &mdash; a perfect round.</p>
-    <div class="scroll-x">
-      <table class="sessions">
-        <thead><tr><th class="num">#</th><th>Player</th><th class="num">Perfect rounds</th><th>Years</th></tr></thead>
-        <tbody>
-          <tr><td class="rank num">1</td><td>Jason Zahler</td><td class="num">5</td><td>2015, 2019, 2024, 2024, 2025</td></tr>
-          <tr><td class="rank num">1</td><td>Trent Augenstein</td><td class="num">5</td><td>2014, 2017, 2017, 2018, 2025</td></tr>
-          <tr><td class="rank num">3</td><td>Andy Rosa</td><td class="num">4</td><td>2015, 2015, 2015, 2017</td></tr>
-          <tr><td class="rank num">3</td><td>Jim Belsito</td><td class="num">4</td><td>2017, 2018, 2019, 2019</td></tr>
-          <tr><td class="rank num">3</td><td>Phil Grimaldi</td><td class="num">4</td><td>2016, 2016, 2018, 2018</td></tr>
-          <tr><td class="rank num">6</td><td>Andrew Rosa II</td><td class="num">3</td><td>2018, 2019, 2019</td></tr>
-          <tr><td class="rank num">6</td><td>Cryss Stephens</td><td class="num">3</td><td>2014, 2016, 2018</td></tr>
-          <tr><td class="rank num">6</td><td>David Barber</td><td class="num">3</td><td>2017, 2018, 2019</td></tr>
-          <tr><td class="rank num">6</td><td>Emily May</td><td class="num">3</td><td>2018, 2019, 2019</td></tr>
-          <tr><td class="rank num">6</td><td>Eric Stone</td><td class="num">3</td><td>2018, 2019, 2026</td></tr>
-          <tr><td class="rank num">6</td><td>Josh Sharpe</td><td class="num">3</td><td>2015, 2017, 2025</td></tr>
-          <tr><td class="rank num">6</td><td>Keith Elwin</td><td class="num">3</td><td>2014, 2019, 2019</td></tr>
-          <tr><td class="rank num">6</td><td>Mike Pantino</td><td class="num">3</td><td>2014, 2018, 2025</td></tr>
-          <tr><td class="rank num">6</td><td>Robert Gagno</td><td class="num">3</td><td>2014, 2016, 2019</td></tr>
-        </tbody>
-      </table>
-    </div>
-  </section>
-
   <section id="personView">
     <button class="back-btn" id="backBtn">&larr; Back to search</button>
     <div class="person-head">
@@ -444,7 +364,6 @@
   var searchInput = document.getElementById('searchInput');
   var resultsEl = document.getElementById('results');
   var searchSection = document.getElementById('searchSection');
-  var top10Section = document.getElementById('top10Section');
   var personView = document.getElementById('personView');
   var compareView = document.getElementById('compareView');
   var finalsView = document.getElementById('finalsView');
@@ -518,7 +437,6 @@
     compareView.style.display = 'none';
     finalsView.style.display = 'none';
     searchSection.style.display = 'block';
-    top10Section.style.display = 'block';
   });
 
   function runSearch(qRaw){
@@ -848,7 +766,6 @@
     });
 
     searchSection.style.display = 'none';
-    top10Section.style.display = 'none';
     compareView.style.display = 'none';
     finalsView.style.display = 'none';
     personView.style.display = 'block';
@@ -858,14 +775,13 @@
   backBtn.addEventListener('click', function(){
     personView.style.display = 'none';
     searchSection.style.display = 'block';
-    top10Section.style.display = 'block';
     searchInput.focus();
   });
 
   finalsBackBtn.addEventListener('click', function(){
     finalsView.style.display = 'none';
     if (currentPerson){ showPerson(currentPerson); }
-    else { searchSection.style.display = 'block'; top10Section.style.display = 'block'; }
+    else { searchSection.style.display = 'block'; }
   });
 
   // ---- finals bracket view ----
@@ -1015,7 +931,6 @@
     });
 
     searchSection.style.display = 'none';
-    top10Section.style.display = 'none';
     personView.style.display = 'none';
     compareView.style.display = 'none';
     finalsView.style.display = 'block';
@@ -1170,7 +1085,6 @@
     });
 
     searchSection.style.display = 'none';
-    top10Section.style.display = 'none';
     personView.style.display = 'none';
     finalsView.style.display = 'none';
     compareView.style.display = 'block';
