@@ -135,11 +135,14 @@
   .sess-bars{display:grid;grid-template-columns:repeat(10,1fr);gap:5px;align-items:end;height:110px;padding:0 2px;position:relative;}
   .sess-zero{position:absolute;left:0;right:0;border-top:1px solid var(--v-baseline);}
   .sess-col{position:relative;height:100%;display:flex;flex-direction:column;justify-content:center;}
+  .sess-col.clickable{cursor:pointer;transition:background .12s;border-radius:4px;}
+  .sess-col.clickable:hover{background:var(--steel-soft);}
   .sess-bar{width:100%;border-radius:3px;position:relative;cursor:pointer;transition:opacity .15s;}
   .sess-bar:hover{opacity:0.82;}
   .sess-bar .val{position:absolute;left:0;right:0;text-align:center;font-size:9px;font-weight:700;font-variant-numeric:tabular-nums;color:var(--v-text-primary);white-space:nowrap;}
   .sess-labels{display:grid;grid-template-columns:repeat(10,1fr);gap:5px;margin-top:6px;}
   .sess-labels span{font-size:9px;color:var(--v-muted);text-align:center;display:block;}
+  .sess-labels span.clickable{cursor:pointer;color:var(--v-text-secondary);font-weight:700;text-decoration:underline dotted;text-underline-offset:2px;}
   .viz-tooltip{position:absolute;pointer-events:none;background:var(--v-text-primary);color:var(--v-surface);font-size:12px;padding:7px 10px;border-radius:6px;white-space:nowrap;opacity:0;transition:opacity .1s;transform:translate(-50%,-100%);z-index:5;box-shadow:var(--shadow);max-width:220px;white-space:normal;text-align:center;}
   .viz-tooltip.show{opacity:1;}
   .bank-popover{display:none;margin-top:10px;background:var(--v-surface);border:1px solid var(--line);border-radius:8px;padding:10px 14px;box-shadow:var(--shadow);}
@@ -707,7 +710,7 @@
           popover.dataset.key = setKey;
           var title = document.createElement('div');
           title.className = 'bp-title';
-          title.textContent = s.b;
+          title.textContent = 'Session ' + s.l + ' · ' + s.b;
           popover.appendChild(title);
           if (machines.length){
             var list = document.createElement('ul');
@@ -748,9 +751,9 @@
         };
         // Full column (not just the thin bar, which can be a few px tall on
         // a near-6-6 score) and the round label below it are both tap targets.
-        col.style.cursor = 'pointer';
+        col.classList.add('clickable');
         col.addEventListener('click', showBankPopover);
-        lab.style.cursor = 'pointer';
+        lab.classList.add('clickable');
         lab.addEventListener('click', showBankPopover);
       }
     });
