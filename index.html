@@ -75,10 +75,11 @@
   .empty-note{font-size:14px;color:var(--ink-soft);padding:10px 2px;}
 
   #personView{display:none;}
-  .back-btn{
-    display:inline-flex; align-items:center; gap:6px; background:none; border:none;
-    color:var(--steel); font-size:14px; font-weight:600; cursor:pointer; padding:6px 0; margin-bottom:18px;
-  }
+  .breadcrumb{font-size:14px; margin:0 0 18px; color:var(--ink-soft);}
+  .breadcrumb a{color:var(--steel); text-decoration:underline; text-underline-offset:2px;}
+  .breadcrumb a:hover{color:var(--ink);}
+  .breadcrumb .crumb-sep{margin:0 7px; color:var(--ink-soft);}
+  .breadcrumb .crumb-current{color:var(--ink); font-weight:600;}
   .person-head{margin-bottom:22px;}
   .person-head h2{font-family:Georgia,"Iowan Old Style",serif;font-size:26px;font-weight:600;margin:0 0 6px;}
   .person-meta{font-size:14px;color:var(--ink-soft);}
@@ -125,7 +126,9 @@
   .standing-arrow.up{color:var(--steel);}
   .standing-arrow.down{color:var(--rust);}
   .standing-arrow.flat{color:var(--ink-soft);}
-  .finals-badge{background:var(--amber-soft);border:1px solid var(--amber);}
+  .finals-badge{background:var(--amber-soft);border:1px solid var(--amber);position:relative;padding-right:24px;cursor:pointer;transition:box-shadow .15s, transform .15s;}
+  .finals-badge:hover{box-shadow:var(--shadow);transform:translateY(-1px);}
+  .finals-badge::after{content:'\203A';position:absolute;right:8px;top:50%;transform:translateY(-50%);font-size:17px;font-weight:700;color:var(--amber);}
   .finals-badge .lbl{color:var(--amber);}
 
   .sess-chart{position:relative;}
@@ -270,7 +273,7 @@
   </section>
 
   <section id="personView">
-    <button class="back-btn" id="backBtn">&larr; Back to search</button>
+    <nav class="breadcrumb" id="personBreadcrumb"></nav>
     <div class="person-head">
       <h2 id="personName"></h2>
       <p class="person-meta" id="personMeta"></p>
@@ -304,7 +307,7 @@
   </section>
 
   <section id="compareView">
-    <button class="back-btn" id="cmpBackBtn">&larr; Back to search</button>
+    <nav class="breadcrumb" id="cmpBreadcrumb"></nav>
     <div class="person-head">
       <h2>Head to head</h2>
       <p class="person-meta" id="cmpMeta"></p>
@@ -327,7 +330,7 @@
   </section>
 
   <section id="finalsView">
-    <button class="back-btn" id="finalsBackBtn">&larr; Back to player</button>
+    <nav class="breadcrumb" id="finalsBreadcrumb"></nav>
     <div class="person-head">
       <h2 id="finalsTitle"></h2>
       <p class="person-meta" id="finalsMeta"></p>
@@ -367,14 +370,84 @@
   var personView = document.getElementById('personView');
   var compareView = document.getElementById('compareView');
   var finalsView = document.getElementById('finalsView');
-  var backBtn = document.getElementById('backBtn');
-  var cmpBackBtn = document.getElementById('cmpBackBtn');
-  var finalsBackBtn = document.getElementById('finalsBackBtn');
-  var currentPerson = null;
+  var personBreadcrumb = document.getElementById('personBreadcrumb');
+  var cmpBreadcrumb = document.getElementById('cmpBreadcrumb');
+  var finalsBreadcrumb = document.getElementById('finalsBreadcrumb');
   var cmpTray = document.getElementById('cmpTray');
   var cmpChips = document.getElementById('cmpChips');
   var cmpGoBtn = document.getElementById('cmpGoBtn');
   var cmpClearBtn = document.getElementById('cmpClearBtn');
+
+  function renderBreadcrumb(container, crumbs){
+    container.innerHTML = '';
+    crumbs.forEach(function(c, i){
+      if (i > 0){
+        var sep = document.createElement('span');
+        sep.className = 'crumb-sep';
+        sep.textContent = '›';
+        container.appendChild(sep);
+      }
+      if (c.hash){
+        var a = document.createElement('a');
+        a.href = c.hash;
+        a.textContent = c.label;
+        container.appendChild(a);
+      } else {
+        var cur = document.createElement('span');
+        cur.className = 'crumb-current';
+        cur.textContent = c.label;
+        container.appendChild(cur);
+      }
+    });
+  }
+
+  function playerHash(p){ return '#/player/' + encodeURIComponent(p.id); }
+  function finalsHash(year, div, p){ return '#/finals/' + year + '/' + encodeURIComponent(div) + '/' + encodeURIComponent(p.id); }
+  function compareHash(ids){ return '#/compare/' + ids.map(encodeURIComponent).join(','); }
+
+  function parseRoute(){
+    var h = location.hash.replace(/^#\/?/, '');
+    if (!h) return {view:'home'};
+    var parts = h.split('/');
+    if (parts[0] === 'player' && parts[1]){
+      return {view:'player', id: decodeURIComponent(parts[1])};
+    }
+    if (parts[0] === 'finals' && parts[1] && parts[2] && parts[3]){
+      return {view:'finals', year: parseInt(parts[1], 10), div: decodeURIComponent(parts[2]), id: decodeURIComponent(parts[3])};
+    }
+    if (parts[0] === 'compare' && parts[1]){
+      return {view:'compare', ids: parts[1].split(',').map(decodeURIComponent)};
+    }
+    return {view:'home'};
+  }
+
+  function router(){
+    var route = parseRoute();
+    if (route.view === 'player'){
+      var p = ID_INDEX[route.id];
+      if (p){ showPerson(p); return; }
+    } else if (route.view === 'finals'){
+      var fp = ID_INDEX[route.id];
+      if (fp){ showFinals(route.year, route.div, fp); return; }
+    } else if (route.view === 'compare'){
+      var ids = route.ids.filter(function(id){ return ID_INDEX[id]; });
+      if (ids.length >= 2){
+        selected = ids.slice(0, MAX_COMPARE);
+        updateTray();
+        syncToggleButtons();
+        showCompare();
+        return;
+      }
+    }
+    showHome();
+  }
+
+  function showHome(){
+    personView.style.display = 'none';
+    compareView.style.display = 'none';
+    finalsView.style.display = 'none';
+    searchSection.style.display = 'block';
+  }
 
   function yearRange(p){
     var ys = p.years.map(function(y){ return y.y; });
@@ -431,12 +504,7 @@
     syncToggleButtons();
   });
   cmpGoBtn.addEventListener('click', function(){
-    if (selected.length >= 2) showCompare();
-  });
-  cmpBackBtn.addEventListener('click', function(){
-    compareView.style.display = 'none';
-    finalsView.style.display = 'none';
-    searchSection.style.display = 'block';
+    if (selected.length >= 2) location.hash = compareHash(selected);
   });
 
   function runSearch(qRaw){
@@ -491,7 +559,7 @@
       btn.innerHTML = '<span class="rn"></span><span class="ry"></span>';
       btn.querySelector('.rn').textContent = p.name;
       btn.querySelector('.ry').textContent = yearRange(p) + (p.ifpa ? ' · IFPA #' + p.ifpa : '');
-      btn.addEventListener('click', function(){ showPerson(p); });
+      btn.addEventListener('click', function(){ location.hash = playerHash(p); });
 
       var toggle = document.createElement('button');
       toggle.type = 'button';
@@ -689,7 +757,10 @@
   }
 
   function showPerson(p){
-    currentPerson = p;
+    renderBreadcrumb(personBreadcrumb, [
+      {label: 'Home', hash: '#/'},
+      {label: p.name}
+    ]);
     document.getElementById('personName').textContent = p.name;
     var cs = careerStats(p);
     document.getElementById('personMeta').textContent =
@@ -760,7 +831,7 @@
         if (fb){
           fb.style.cursor = 'pointer';
           fb.title = 'See full finals bracket';
-          fb.addEventListener('click', function(){ showFinals(y.y, y.fin.d, p.name); });
+          fb.addEventListener('click', function(){ location.hash = finalsHash(y.y, y.fin.d, p); });
         }
       }
     });
@@ -771,18 +842,6 @@
     personView.style.display = 'block';
     window.scrollTo({top:0, behavior:'instant'});
   }
-
-  backBtn.addEventListener('click', function(){
-    personView.style.display = 'none';
-    searchSection.style.display = 'block';
-    searchInput.focus();
-  });
-
-  finalsBackBtn.addEventListener('click', function(){
-    finalsView.style.display = 'none';
-    if (currentPerson){ showPerson(currentPerson); }
-    else { searchSection.style.display = 'block'; }
-  });
 
   // ---- finals bracket view ----
 
@@ -894,7 +953,13 @@
     container.appendChild(wrap);
   }
 
-  function showFinals(year, division, personName){
+  function showFinals(year, division, person){
+    var personName = person.name;
+    renderBreadcrumb(finalsBreadcrumb, [
+      {label: 'Home', hash: '#/'},
+      {label: personName, hash: playerHash(person)},
+      {label: year + ' Div ' + division + ' Finals'}
+    ]);
     var rounds = FINALS_BRACKET[year + '_' + division] || [];
     var relevant = [];
     rounds.forEach(function(round){
@@ -961,6 +1026,11 @@
 
   function showCompare(){
     var people = selected.map(function(id){ return ID_INDEX[id]; });
+
+    renderBreadcrumb(cmpBreadcrumb, [
+      {label: 'Home', hash: '#/'},
+      {label: 'Compare · ' + people.map(function(p){ return p.name; }).join(', ')}
+    ]);
 
     document.getElementById('cmpMeta').textContent =
       people.length + ' players selected · final year-by-year record, ' + YEAR_MIN + '–' + YEAR_MAX;
@@ -1097,5 +1167,8 @@
       el.dataset.key = '';
     });
   });
+
+  window.addEventListener('hashchange', router);
+  router();
 })();
 </script>
