@@ -175,6 +175,12 @@
   .sess-labels span{font-size:9px;color:var(--v-muted);text-align:center;display:block;}
   .sess-labels span.clickable{cursor:pointer;color:var(--v-text-secondary);font-weight:700;text-decoration:underline dotted;text-underline-offset:2px;}
   .sess-labels span.active{color:var(--steel);text-decoration-style:solid;}
+  .wd-bars{display:grid;grid-template-columns:repeat(13,1fr);gap:4px;align-items:end;height:90px;padding:16px 2px 0;}
+  .wd-bar{width:100%;min-height:2px;border-radius:3px 3px 0 0;position:relative;cursor:pointer;transition:opacity .15s;}
+  .wd-bar:hover{opacity:0.82;}
+  .wd-bar .val{position:absolute;left:0;right:0;bottom:100%;margin-bottom:2px;text-align:center;font-size:9px;font-weight:700;font-variant-numeric:tabular-nums;color:var(--v-text-primary);white-space:nowrap;}
+  .wd-labels{display:grid;grid-template-columns:repeat(13,1fr);gap:4px;margin-top:6px;}
+  .wd-labels span{font-size:9px;color:var(--v-muted);text-align:center;display:block;}
   .viz-tooltip{position:absolute;pointer-events:none;background:var(--v-text-primary);color:var(--v-surface);font-size:12px;padding:7px 10px;border-radius:6px;white-space:nowrap;opacity:0;transition:opacity .1s;transform:translate(-50%,-100%);z-index:5;box-shadow:var(--shadow);max-width:220px;white-space:normal;text-align:center;}
   .viz-tooltip.show{opacity:1;}
   .bank-popover{display:none;margin-top:10px;background:var(--v-surface);border:1px solid var(--line);border-radius:8px;padding:10px 14px;box-shadow:var(--shadow);}
@@ -347,6 +353,15 @@
     <div class="person-head">
       <h2 id="personName"></h2>
       <p class="person-meta" id="personMeta"></p>
+    </div>
+
+    <div class="viz-root" id="winDistWrap" style="margin-bottom:20px;">
+      <p class="viz-title">Session win distribution<span class="div"> &middot; wins per session, career total</span></p>
+      <div style="position:relative;">
+        <div class="wd-bars" id="winDistBars"></div>
+        <div class="wd-labels" id="winDistLabels"></div>
+        <div class="viz-tooltip" id="winDistTooltip"></div>
+      </div>
     </div>
 
     <div class="scroll-x">
@@ -881,6 +896,71 @@
     });
   }
 
+  // Tallies every session this person has ever played (all years) by win
+  // count, 0-12. Half-point ties (e.g. 7.5-4.5) round to the nearest whole
+  // win count -- real but under 1% of all sessions site-wide, and a 25-bar
+  // chart to represent that sliver isn't worth the width for the other 99%.
+  function winDistBuckets(p){
+    var counts = new Array(13).fill(0);
+    var absentInBucket = new Array(13).fill(0);
+    var total = 0;
+    p.years.forEach(function(y){
+      y.s.forEach(function(s){
+        var b = Math.max(0, Math.min(12, Math.round(s.w)));
+        counts[b]++;
+        if (!s.b) absentInBucket[b]++;
+        total++;
+      });
+    });
+    return {counts: counts, absentInBucket: absentInBucket, total: total};
+  }
+
+  function renderWinDist(p, barsEl, labelsEl, tip){
+    var d = winDistBuckets(p);
+    barsEl.innerHTML = '';
+    labelsEl.innerHTML = '';
+    var max = Math.max.apply(null, d.counts.concat([1]));
+    for (var i = 0; i <= 12; i++){
+      (function(i){
+        var count = d.counts[i];
+        var pctH = max ? (count / max * 100) : 0;
+        var color = i > 6 ? 'var(--v-blue)' : (i < 6 ? 'var(--v-red)' : 'var(--v-neutral)');
+
+        var bar = document.createElement('div');
+        bar.className = 'wd-bar';
+        bar.style.height = (count > 0 ? Math.max(pctH, 3) : 0) + '%';
+        bar.style.background = color;
+
+        if (count > 0){
+          var val = document.createElement('span');
+          val.className = 'val';
+          val.textContent = count;
+          bar.appendChild(val);
+        }
+
+        var pctOfTotal = d.total ? Math.round(count / d.total * 100) : 0;
+        var label = count + ' session' + (count === 1 ? '' : 's') + ' · ' + i + ' win' + (i === 1 ? '' : 's') +
+          ' (' + pctOfTotal + '%)';
+        if (i === 0 && d.absentInBucket[0] > 0){
+          label += ' · incl. ' + d.absentInBucket[0] + ' absence' + (d.absentInBucket[0] === 1 ? '' : 's');
+        }
+        bar.addEventListener('mouseenter', function(){ tip.textContent = label; tip.classList.add('show'); });
+        bar.addEventListener('mousemove', function(e){
+          var rect = barsEl.getBoundingClientRect();
+          tip.style.left = (e.clientX - rect.left) + 'px';
+          tip.style.top = '0px';
+        });
+        bar.addEventListener('mouseleave', function(){ tip.classList.remove('show'); });
+        bar.addEventListener('touchstart', function(){ tip.textContent = label; tip.classList.add('show'); }, {passive:true});
+        barsEl.appendChild(bar);
+
+        var lab = document.createElement('span');
+        lab.textContent = i;
+        labelsEl.appendChild(lab);
+      })(i);
+    }
+  }
+
   function showPerson(p){
     renderBreadcrumb(personBreadcrumb, [
       {label: 'Home', hash: '#/'},
@@ -891,6 +971,13 @@
     document.getElementById('personMeta').textContent =
       (p.ifpa ? 'IFPA #' + p.ifpa + ' · ' : '') + p.years.length + ' Pinburgh' + (p.years.length===1?'':'s') + ': ' + p.years.map(function(y){return y.y;}).join(', ') +
       ' · Career: ' + fmtScore(cs.w) + '-' + fmtScore(cs.o) + ' (' + cs.pct + '%)';
+
+    renderWinDist(
+      p,
+      document.getElementById('winDistBars'),
+      document.getElementById('winDistLabels'),
+      document.getElementById('winDistTooltip')
+    );
 
     var tbody = document.getElementById('yearTableBody');
     tbody.innerHTML = '';
