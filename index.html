@@ -289,7 +289,7 @@
 
     <details class="data-notice">
       <summary>Finals bracket coverage &amp; data notes</summary>
-      <p><strong>Finals bracket data is included for: 2016 (A, C); 2019 (A, B, C, D); 2025 (A, B, C); 2026 (A, B, C).</strong>
+      <p><strong>Finals bracket data is included for: 2016 (<a href="#/bracket/2016/A">A</a>, <a href="#/bracket/2016/C">C</a>); 2019 (<a href="#/bracket/2019/A">A</a>, <a href="#/bracket/2019/B">B</a>, <a href="#/bracket/2019/C">C</a>, <a href="#/bracket/2019/D">D</a>); 2025 (<a href="#/bracket/2025/A">A</a>, <a href="#/bracket/2025/B">B</a>, <a href="#/bracket/2025/C">C</a>); 2026 (<a href="#/bracket/2026/A">A</a>, <a href="#/bracket/2026/B">B</a>, <a href="#/bracket/2026/C">C</a>).</strong>
         Other years/divisions aren't scraped yet &mdash; those player pages show qualifying (Sessions 1&ndash;10)
         data only, with no finals badge or bracket detail.</p>
     </details>
@@ -466,6 +466,7 @@
   function playerHash(p){ return '#/player/' + encodeURIComponent(p.id); }
   function finalsHash(year, div, p){ return '#/finals/' + year + '/' + encodeURIComponent(div) + '/' + encodeURIComponent(p.id); }
   function compareHash(ids){ return '#/compare/' + ids.map(encodeURIComponent).join(','); }
+  function bracketHash(year, div){ return '#/bracket/' + year + '/' + encodeURIComponent(div); }
 
   function parseRoute(){
     var h = location.hash.replace(/^#\/?/, '');
@@ -479,6 +480,9 @@
     }
     if (parts[0] === 'compare' && parts[1]){
       return {view:'compare', ids: parts[1].split(',').map(decodeURIComponent)};
+    }
+    if (parts[0] === 'bracket' && parts[1] && parts[2]){
+      return {view:'bracket', year: parseInt(parts[1], 10), div: decodeURIComponent(parts[2])};
     }
     return {view:'home'};
   }
@@ -500,6 +504,9 @@
         showCompare();
         return;
       }
+    } else if (route.view === 'bracket'){
+      showBracket(route.year, route.div);
+      return;
     }
     showHome();
   }
@@ -508,6 +515,7 @@
     personView.style.display = 'none';
     compareView.style.display = 'none';
     finalsView.style.display = 'none';
+    bracketView.style.display = 'none';
     searchSection.style.display = 'block';
   }
 
@@ -914,6 +922,7 @@
     searchSection.style.display = 'none';
     compareView.style.display = 'none';
     finalsView.style.display = 'none';
+    bracketView.style.display = 'none';
     personView.style.display = 'block';
     window.scrollTo({top:0, behavior:'instant'});
   }
@@ -960,7 +969,7 @@
     roster.forEach(function(r){
       var th = document.createElement('th');
       if (r.nm === focusName) th.className = 'fr-focus';
-      th.textContent = '#' + r.sd + ' ' + r.nm;
+      th.textContent = (r.sd != null ? '#' + r.sd + ' ' : '') + r.nm;
       headRow.appendChild(th);
     });
     thead.appendChild(headRow);
@@ -1001,7 +1010,7 @@
       var td = document.createElement('td');
       td.className = 'fr-total' + (r.nm === focusName ? ' fr-focus' : '');
       var res = group.res[r.nm];
-      td.textContent = res ? fmtCommas(res.tot) : '—';
+      td.textContent = (res && res.tot != null) ? fmtCommas(res.tot) : '—';
       trTotal.appendChild(td);
     });
     tbody.appendChild(trTotal);
@@ -1051,6 +1060,14 @@
     document.getElementById('finalsMeta').textContent = year + ' · Division ' + division + ' Finals' +
       (relevant.length ? ' · ' + relevant.length + ' bracket round' + (relevant.length === 1 ? '' : 's') : '');
 
+    var bracketLink = document.getElementById('finalsBracketLink');
+    if (rounds.length){
+      bracketLink.href = bracketHash(year, division);
+      bracketLink.parentElement.style.display = '';
+    } else {
+      bracketLink.parentElement.style.display = 'none';
+    }
+
     var container = document.getElementById('finalsRounds');
     container.innerHTML = '';
     if (!relevant.length){
@@ -1073,7 +1090,52 @@
     searchSection.style.display = 'none';
     personView.style.display = 'none';
     compareView.style.display = 'none';
+    bracketView.style.display = 'none';
     finalsView.style.display = 'block';
+    window.scrollTo({top:0, behavior:'instant'});
+  }
+
+  function showBracket(year, division){
+    renderBreadcrumb(bracketBreadcrumb, [
+      {label: 'Home', hash: '#/'},
+      {label: year + ' Div ' + division + ' Finals Bracket'}
+    ]);
+    var rounds = FINALS_BRACKET[year + '_' + division] || [];
+    var totalGroups = rounds.reduce(function(sum, r){ return sum + r.groups.length; }, 0);
+
+    document.getElementById('bracketTitle').textContent = year + ' · Division ' + division + ' Finals Bracket';
+    document.getElementById('bracketMeta').textContent = rounds.length ?
+      (rounds.length + ' round' + (rounds.length === 1 ? '' : 's') + ' · ' +
+       totalGroups + ' group' + (totalGroups === 1 ? '' : 's') + ' recorded') :
+      'No finals bracket data recorded for this year/division.';
+
+    var container = document.getElementById('bracketRounds');
+    container.innerHTML = '';
+    rounds.forEach(function(round){
+      var section = document.createElement('div');
+      section.className = 'fr-round';
+      var title = document.createElement('p');
+      title.className = 'fr-round-title';
+      title.textContent = round.l;
+      section.appendChild(title);
+      container.appendChild(section);
+      var sortedGroups = round.groups.slice().sort(function(a,b){ return a.g - b.g; });
+      sortedGroups.forEach(function(group){
+        if (sortedGroups.length > 1){
+          var glabel = document.createElement('p');
+          glabel.className = 'fr-round-sub';
+          glabel.textContent = 'Group ' + group.g;
+          section.appendChild(glabel);
+        }
+        renderFinalsGroup(section, group, null);
+      });
+    });
+
+    searchSection.style.display = 'none';
+    personView.style.display = 'none';
+    compareView.style.display = 'none';
+    finalsView.style.display = 'none';
+    bracketView.style.display = 'block';
     window.scrollTo({top:0, behavior:'instant'});
   }
 
@@ -1232,6 +1294,7 @@
     searchSection.style.display = 'none';
     personView.style.display = 'none';
     finalsView.style.display = 'none';
+    bracketView.style.display = 'none';
     compareView.style.display = 'block';
     window.scrollTo({top:0, behavior:'instant'});
   }
