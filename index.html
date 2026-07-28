@@ -281,13 +281,6 @@
   .cmp-hiatus{fill:var(--ink-soft);opacity:0.06;}
   .cmp-hiatus-label{font-size:9px;fill:var(--ink-soft);text-anchor:middle;}
 
-  .trend-wrap{position:relative;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:16px 18px 8px;box-shadow:var(--shadow);margin-bottom:20px;}
-  .trend-svg{width:100%;height:auto;display:block;overflow:visible;}
-  .trend-area{fill-opacity:0.13;}
-  .trend-line{fill:none;stroke-width:2.5;stroke-linejoin:round;stroke-linecap:round;}
-  .trend-dot{cursor:pointer;transition:r .1s;}
-  .trend-dot.last{stroke:var(--surface);stroke-width:2;}
-
   @media (max-width:560px){ header.hero{padding:40px 20px 24px;} }
 </style>
 
@@ -350,12 +343,6 @@
     <div class="person-head">
       <h2 id="personName"></h2>
       <p class="person-meta" id="personMeta"></p>
-    </div>
-
-    <div class="trend-wrap" id="trendWrap" style="display:none;">
-      <p class="viz-title">Career trend<span class="div"> &middot; win% by year, hover a point for detail</span></p>
-      <svg id="trendSvg" class="trend-svg" viewBox="0 0 680 140" preserveAspectRatio="xMidYMid meet"></svg>
-      <div class="viz-tooltip" id="trendTooltip"></div>
     </div>
 
     <div class="scroll-x">
@@ -883,73 +870,6 @@
     });
   }
 
-  function renderCareerTrend(p, cs){
-    var wrap = document.getElementById('trendWrap');
-    var sorted = p.years.slice().sort(function(a,b){ return a.y - b.y; });
-    if (sorted.length < 2){ wrap.style.display = 'none'; return; }
-    wrap.style.display = 'block';
-
-    var svg = document.getElementById('trendSvg');
-    var tip = document.getElementById('trendTooltip');
-    svg.innerHTML = '';
-    var W = 680, H = 140, left = 34, right = 16, top = 12, bottom = 20;
-    var plotW = W - left - right, plotH = H - top - bottom;
-    var yrMin = sorted[0].y, yrMax = sorted[sorted.length-1].y;
-    var span = Math.max(yrMax - yrMin, 1);
-    function xOf(yr){ return left + (yr - yrMin) / span * plotW; }
-    function yOf(pc){ return top + (100 - pc) / 100 * plotH; }
-    var color = cs.pct >= 50 ? 'var(--steel)' : 'var(--rust)';
-
-    if (yrMin < HIATUS_START && yrMax > HIATUS_END){
-      var hx0 = xOf(HIATUS_START), hx1 = xOf(HIATUS_END);
-      svg.appendChild(svgEl('rect', {x:hx0, y:top, width:(hx1-hx0), height:plotH, class:'cmp-hiatus'}));
-    }
-
-    var y50 = yOf(50);
-    svg.appendChild(svgEl('line', {x1:left, x2:left+plotW, y1:y50, y2:y50, class:'cmp-gridline'}));
-    var lbl50 = svgEl('text', {x:left-8, y:y50+3, class:'cmp-axis-label', 'text-anchor':'end'});
-    lbl50.textContent = '50%';
-    svg.appendChild(lbl50);
-
-    var coords = sorted.map(function(y){
-      var pc = y.w+y.o ? Math.round(y.w/(y.w+y.o)*100) : 0;
-      return {x:xOf(y.y), y:yOf(pc), year:y.y, pct:pc, w:y.w, o:y.o};
-    });
-    var linePath = coords.map(function(c,i){ return (i===0?'M':'L') + c.x.toFixed(1) + ',' + c.y.toFixed(1); }).join(' ');
-    var areaPath = linePath +
-      ' L' + coords[coords.length-1].x.toFixed(1) + ',' + (top+plotH) +
-      ' L' + coords[0].x.toFixed(1) + ',' + (top+plotH) + ' Z';
-    svg.appendChild(svgEl('path', {d:areaPath, class:'trend-area', fill:color}));
-    svg.appendChild(svgEl('path', {d:linePath, class:'trend-line', stroke:color}));
-
-    coords.forEach(function(c, i){
-      var isLast = i === coords.length - 1;
-      var dot = svgEl('circle', {cx:c.x, cy:c.y, r: isLast ? 5.5 : 3.5, fill:color, class:'trend-dot' + (isLast?' last':'')});
-      dot.addEventListener('mouseenter', function(){
-        tip.textContent = c.year + ' · ' + fmtRecord(c.w, c.o) + ' (' + c.pct + '%)';
-        tip.classList.add('show');
-      });
-      dot.addEventListener('mousemove', function(e){
-        var rect = svg.getBoundingClientRect();
-        tip.style.left = (e.clientX - rect.left) + 'px';
-        tip.style.top = ((c.y/H)*rect.height - 34) + 'px';
-      });
-      dot.addEventListener('mouseleave', function(){ tip.classList.remove('show'); });
-      svg.appendChild(dot);
-    });
-
-    var showAll = coords.length <= 6;
-    coords.forEach(function(c, i){
-      if (!showAll && i !== 0 && i !== coords.length-1) return;
-      var t = svgEl('text', {
-        x:c.x, y:H-6, class:'cmp-axis-label',
-        'text-anchor': i===0 ? 'start' : (i===coords.length-1 ? 'end' : 'middle')
-      });
-      t.textContent = c.year;
-      svg.appendChild(t);
-    });
-  }
-
   function showPerson(p){
     renderBreadcrumb(personBreadcrumb, [
       {label: 'Home', hash: '#/'},
@@ -960,7 +880,6 @@
     document.getElementById('personMeta').textContent =
       (p.ifpa ? 'IFPA #' + p.ifpa + ' · ' : '') + p.years.length + ' Pinburgh' + (p.years.length===1?'':'s') + ': ' + p.years.map(function(y){return y.y;}).join(', ') +
       ' · Career: ' + fmtScore(cs.w) + '-' + fmtScore(cs.o) + ' (' + cs.pct + '%)';
-    renderCareerTrend(p, cs);
 
     var tbody = document.getElementById('yearTableBody');
     tbody.innerHTML = '';
