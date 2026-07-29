@@ -120,6 +120,8 @@
   .breadcrumb .crumb-current{color:var(--ink); font-weight:600;}
   .person-head{margin-bottom:22px;}
   .person-head h2{font-family:Georgia,"Iowan Old Style",serif;font-size:26px;font-weight:600;margin:0 0 6px;}
+  .goat-badge{display:inline-flex;align-items:center;gap:6px;margin-left:10px;vertical-align:middle;font-size:11px;letter-spacing:0.05em;text-transform:uppercase;color:var(--ink-soft);font-weight:700;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;}
+  .goat-badge .goat-emoji{font-size:24px;line-height:1;filter:grayscale(100%) contrast(1.05);}
   .person-meta{font-size:14px;color:var(--ink-soft);}
 
   table.sessions{width:100%;border-collapse:collapse;font-size:13.5px;background:var(--surface);border:1px solid var(--line);border-radius:10px;overflow:hidden;box-shadow:var(--shadow);}
@@ -1033,7 +1035,25 @@
       {label: 'Home', hash: '#/'},
       {label: p.name}
     ]);
-    document.getElementById('personName').textContent = p.name;
+    var personNameEl = document.getElementById('personName');
+    personNameEl.textContent = p.name;
+    // Matches the homepage example chips: Keith Elwin = old GOAT, Jason
+    // Zahler = new GOAT. Keyed by person id so name edits can't break it.
+    var GOATS = {'ifpa-1': 'old goat', 'ifpa-11938': 'new goat'};
+    if (GOATS[p.id]){
+      var goatBadge = document.createElement('span');
+      goatBadge.className = 'goat-badge';
+      goatBadge.title = 'GOAT = Greatest Of All Time';
+      var goatEmoji = document.createElement('span');
+      goatEmoji.className = 'goat-emoji';
+      goatEmoji.setAttribute('aria-hidden', 'true');
+      goatEmoji.textContent = '🐐';
+      var goatCap = document.createElement('span');
+      goatCap.textContent = GOATS[p.id];
+      goatBadge.appendChild(goatEmoji);
+      goatBadge.appendChild(goatCap);
+      personNameEl.appendChild(goatBadge);
+    }
     var cs = careerStats(p);
     document.getElementById('personMeta').textContent =
       (p.ifpa ? 'IFPA #' + p.ifpa + ' · ' : '') + p.years.length + ' Pinburgh' + (p.years.length===1?'':'s') + ': ' + p.years.map(function(y){return y.y;}).join(', ') +
