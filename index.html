@@ -103,8 +103,12 @@
   }
   .result-btn .rp.win-good{background:var(--steel-soft);color:var(--steel);}
   .result-btn .rp.win-bad{background:var(--rust-soft);color:var(--rust);}
-  .result-btn .rc{flex-shrink:0;font-size:19px;font-weight:700;color:var(--steel);transition:transform .12s;}
-  .result-btn:hover .rc{transform:translateX(2px);}
+  .result-btn .ry{flex-shrink:1;overflow:hidden;text-overflow:ellipsis;}
+  .result-btn .rc{
+    flex-shrink:0;font-size:12px;font-weight:700;color:var(--surface);background:var(--steel);
+    padding:5px 12px;border-radius:999px;white-space:nowrap;transition:filter .12s;
+  }
+  .result-btn:hover .rc{filter:brightness(1.12);}
   @media (prefers-reduced-motion: reduce){ .result-btn{transition:none;} }
   .empty-note{font-size:14px;color:var(--ink-soft);padding:10px 2px;}
 
@@ -666,7 +670,7 @@
 
       var btn = document.createElement('button');
       btn.className = 'result-btn';
-      btn.innerHTML = '<span class="rn"></span><span class="ry"></span><span class="rp"></span><span class="rc" aria-hidden="true">&rsaquo;</span>';
+      btn.innerHTML = '<span class="rn"></span><span class="ry"></span><span class="rp"></span><span class="rc">View &rsaquo;</span>';
       btn.querySelector('.rn').textContent = p.name;
       btn.querySelector('.ry').textContent = yearRange(p) + (p.ifpa ? ' · IFPA #' + p.ifpa : '');
       var cs = careerStats(p);
