@@ -5,7 +5,7 @@
   :root{
     --bg:#EEF0F1; --surface:#FFFFFF; --ink:#1B2126; --ink-soft:#5B6670;
     --line:#DBE1E4; --steel:#3E5C6E; --steel-soft:#DCE6EA; --rust:#9C4B2E;
-    --rust-soft:#F1DDD3; --amber:#93692B; --amber-soft:#F1E4C7;
+    --rust-soft:#F1DDD3; --amber:#7A5323; --amber-soft:#F1E4C7;
     --shadow: 0 1px 2px rgba(20,25,29,0.05), 0 6px 18px rgba(20,25,29,0.05);
   }
   @media (prefers-color-scheme: dark){
@@ -25,7 +25,7 @@
   :root[data-theme="light"]{
     --bg:#EEF0F1; --surface:#FFFFFF; --ink:#1B2126; --ink-soft:#5B6670;
     --line:#DBE1E4; --steel:#3E5C6E; --steel-soft:#DCE6EA; --rust:#9C4B2E;
-    --rust-soft:#F1DDD3; --amber:#93692B; --amber-soft:#F1E4C7;
+    --rust-soft:#F1DDD3; --amber:#7A5323; --amber-soft:#F1E4C7;
     --shadow: 0 1px 2px rgba(20,25,29,0.05), 0 6px 18px rgba(20,25,29,0.05);
   }
 
@@ -46,15 +46,16 @@
   .hero-sub strong{color:var(--ink);font-weight:600;}
 
   .hero-stats{display:flex;flex-wrap:wrap;gap:10px;margin:18px 0 0;}
-  .hero-stat{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:9px 16px;box-shadow:var(--shadow);transition:transform .15s,box-shadow .15s;}
-  .hero-stat:hover{transform:translateY(-2px);box-shadow:0 4px 8px rgba(20,25,29,0.08),0 10px 22px rgba(20,25,29,0.07);}
+  .hero-stat{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:9px 16px;box-shadow:var(--shadow);}
   .hero-stat .v{display:block;font-size:21px;font-weight:600;color:var(--ink);font-variant-numeric:tabular-nums;}
   .hero-stat .l{display:block;font-size:10.5px;letter-spacing:0.05em;text-transform:uppercase;color:var(--ink-soft);font-weight:600;margin-top:1px;}
   .hero-stats-note{font-size:11px;color:var(--ink-soft);margin:6px 2px 0;}
-  @media (prefers-reduced-motion: reduce){ .hero-stat{transition:none;} }
 
   .data-notice{margin:16px 0 0;max-width:70ch;font-size:13px;color:var(--ink-soft);}
-  .data-notice summary{cursor:pointer;font-weight:600;color:var(--ink-soft);}
+  .data-notice summary{cursor:pointer;font-weight:600;color:var(--ink-soft);list-style:none;}
+  .data-notice summary::-webkit-details-marker{display:none;}
+  .data-notice summary::before{content:'\203A';display:inline-block;margin-right:7px;font-size:15px;font-weight:700;transition:transform .12s;}
+  .data-notice[open] summary::before{transform:rotate(90deg);}
   .data-notice summary:hover{color:var(--ink);}
   .data-notice p{margin:6px 0 0;}
   .data-notice strong{font-weight:700;color:var(--ink);}
@@ -253,7 +254,7 @@
     font-size:14px; font-weight:700; cursor:pointer; white-space:nowrap;
   }
   .cmp-go-btn:disabled{opacity:0.4; cursor:not-allowed;}
-  .cmp-clear-btn{background:none;border:none;color:var(--ink-soft);font-size:13px;cursor:pointer;text-decoration:underline;}
+  .cmp-clear-btn{background:none;border:none;color:var(--ink-soft);font-size:13px;cursor:pointer;text-decoration:underline;padding:10px 8px;}
 
   #compareView{display:none;}
   #finalsView{display:none;}
@@ -313,7 +314,7 @@
         Other years/divisions aren't scraped yet &mdash; those player pages show qualifying (Sessions 1&ndash;10)
         data only, with no finals badge or bracket detail.</p>
       <p><strong>"Day 1" and "Overall finish" are rank against the entire field</strong> (Day 1 after Session 5,
-        the point pinburgh.com locks in divisions for the rest of the event; Overall finish after all 20
+        the point at which pinburgh.com locks in divisions for the rest of the event; Overall finish after all 20
         qualifying sessions). <strong>"Final" and "Division finish" are rank within that division only</strong>
         &mdash; not the same scale, so a strong Day 1 rank can still come with a rough Final once it's
         division-relative.</p>
@@ -323,7 +324,7 @@
         left off for anyone who didn't place high enough to earn any.</p>
     </details>
 
-    <p class="hero-links">Also see: <a href="top100.html">Top 100 all-time records</a> &middot;
+    <p class="hero-links">Also see: <a href="top100.html">Top 100 single-year records</a> &middot;
       <a href="perfect-rounds.html">Perfect rounds</a> (12&ndash;0 sessions)</p>
   </div>
 </header>
@@ -339,13 +340,13 @@
       <span class="lbl">Try:</span>
       <div class="example-item">
         <button type="button" class="example-chip" data-q="Keith Elwin">Keith Elwin</button>
-        <span class="example-caption">old goat</span>
-        <span class="example-goat" aria-hidden="true">&#128016;</span>
+        <span class="example-caption" title="GOAT = Greatest Of All Time">old goat</span>
+        <span class="example-goat" aria-hidden="true" title="GOAT = Greatest Of All Time">&#128016;</span>
       </div>
       <div class="example-item">
         <button type="button" class="example-chip" data-q="Jason Zahler">Jason Zahler</button>
-        <span class="example-caption">new goat</span>
-        <span class="example-goat" aria-hidden="true">&#128016;</span>
+        <span class="example-caption" title="GOAT = Greatest Of All Time">new goat</span>
+        <span class="example-goat" aria-hidden="true" title="GOAT = Greatest Of All Time">&#128016;</span>
       </div>
     </div>
     <div id="results"></div>
@@ -757,18 +758,14 @@
     // IFPA's own final placement + WPPR points earned -- the sole source for
     // this badge is IFPA's tournament results page (see scrape_ifpa_points.py),
     // not pinburgh.com. Only players who actually earned points show up in
-    // IFPA's results at all, so this whole badge (and its arrow) is omitted
-    // for anyone without an "ip" entry that year, rather than showing a "—".
+    // IFPA's results at all, so this whole badge is omitted for anyone without
+    // an "ip" entry that year, rather than showing a "—". The connector arrow
+    // is deliberately always flat: IFPA ranks only its point-earning subset of
+    // the field, so a percentile computed against the full field (like the
+    // Day1->Final arrow uses) wouldn't measure the same thing.
     var ifpaBlock = '';
     if (y.ip){
-      var arrowCls2 = 'flat', arrow2 = '→';
-      if (y.d1r && y.wn){
-        var day1Pct2 = (y.d1r - 1) / Math.max(y.d1n - 1, 1);
-        var ifpaPct2 = (y.ip.pos - 1) / Math.max(y.wn - 1, 1);
-        if (ifpaPct2 < day1Pct2 - 0.01){ arrowCls2 = 'up'; arrow2 = '↗'; }
-        else if (ifpaPct2 > day1Pct2 + 0.01){ arrowCls2 = 'down'; arrow2 = '↘'; }
-      }
-      ifpaBlock = '<div class="standing-arrow ' + arrowCls2 + '">' + arrow2 + '</div>' +
+      ifpaBlock = '<div class="standing-arrow flat">→</div>' +
         '<div class="standing-badge"><span class="lbl">Final &middot; IFPA</span>' +
         '<span class="val">' + ordinal(y.ip.pos) + ' <span class="sub">' + y.ip.pts.toFixed(2) + ' pts</span></span></div>';
     }
@@ -895,6 +892,22 @@
         col.addEventListener('click', showBankPopover);
         lab.classList.add('clickable');
         lab.addEventListener('click', showBankPopover);
+        col.tabIndex = 0;
+        col.setAttribute('role', 'button');
+        col.setAttribute('aria-label', 'Session ' + s.l + ': ' + fmtRecord(s.w, s.o) + ' at ' + s.b + '. Show machines and opponents.');
+        col.addEventListener('keydown', function(e){
+          if (e.key === 'Enter' || e.key === ' '){ e.preventDefault(); showBankPopover(e); }
+        });
+        col.addEventListener('focus', function(){
+          tip.textContent = label;
+          tip.style.left = (col.offsetLeft + col.offsetWidth / 2) + 'px';
+          tip.style.top = '0px';
+          tip.classList.add('show');
+        });
+        col.addEventListener('blur', function(){ tip.classList.remove('show'); });
+      } else {
+        col.setAttribute('role', 'img');
+        col.setAttribute('aria-label', label);
       }
     });
   }
@@ -955,6 +968,18 @@
         });
         bar.addEventListener('mouseleave', function(){ tip.classList.remove('show'); });
         bar.addEventListener('touchstart', function(){ tip.textContent = label; tip.classList.add('show'); }, {passive:true});
+        if (count > 0){
+          bar.tabIndex = 0;
+          bar.setAttribute('role', 'img');
+          bar.setAttribute('aria-label', label);
+          bar.addEventListener('focus', function(){
+            tip.textContent = label;
+            tip.style.left = (bar.offsetLeft + bar.offsetWidth / 2) + 'px';
+            tip.style.top = '0px';
+            tip.classList.add('show');
+          });
+          bar.addEventListener('blur', function(){ tip.classList.remove('show'); });
+        }
         barsEl.appendChild(bar);
 
         var lab = document.createElement('span');
@@ -1317,6 +1342,10 @@
       item.querySelector('span:last-child').textContent = p.name;
       item.addEventListener('mouseenter', function(){ highlight(p.id); });
       item.addEventListener('mouseleave', function(){ highlight(null); });
+      item.tabIndex = 0;
+      item.setAttribute('aria-label', 'Highlight ' + p.name + ' in the chart');
+      item.addEventListener('focus', function(){ highlight(p.id); });
+      item.addEventListener('blur', function(){ highlight(null); });
       legend.appendChild(item);
     });
 
@@ -1380,6 +1409,18 @@
           tip.style.top = ((pt.y/H)*rect.height - 40) + 'px';
         });
         c.addEventListener('mouseleave', function(){ tip.classList.remove('show'); highlight(null); });
+        c.setAttribute('tabindex', '0');
+        c.setAttribute('role', 'img');
+        c.setAttribute('aria-label', p.name + ', ' + pt.year + ': ' + fmtRecord(pt.w, pt.o) + ', ' + pt.pct + ' percent');
+        c.addEventListener('focus', function(){
+          tip.textContent = p.name + ' · ' + pt.year + ': ' + fmtRecord(pt.w, pt.o) + ' (' + pt.pct + '%)';
+          var rect = svg.getBoundingClientRect();
+          tip.style.left = ((pt.x/W)*rect.width) + 'px';
+          tip.style.top = ((pt.y/H)*rect.height - 40) + 'px';
+          tip.classList.add('show');
+          highlight(p.id);
+        });
+        c.addEventListener('blur', function(){ tip.classList.remove('show'); highlight(null); });
         svg.appendChild(c);
         allPts.push({el:c, id:p.id});
       });
