@@ -231,6 +231,14 @@
 
   .result-row{display:flex;align-items:stretch;gap:8px;}
   .result-row .result-btn{flex:1;}
+  .cmp-mode-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:10px 2px 0;}
+  .cmp-mode-toggle{
+    background:none;border:1px solid var(--line);border-radius:999px;padding:6px 14px;
+    font-size:12.5px;color:var(--ink-soft);cursor:pointer;
+  }
+  .cmp-mode-toggle:hover{border-color:var(--steel);color:var(--steel);}
+  .cmp-mode-toggle[aria-pressed="true"]{background:var(--steel-soft);border-color:var(--steel);color:var(--steel);font-weight:700;}
+  .cmp-mode-hint{font-size:12px;color:var(--ink-soft);}
   .cmp-toggle{
     flex-shrink:0; width:46px; border-radius:8px; border:1px solid var(--line);
     background:var(--surface); color:var(--ink-soft); font-size:18px; font-weight:600;
@@ -339,7 +347,11 @@
     <div class="search-wrap">
       <input id="searchInput" type="text" placeholder="Name (full or partial) or IFPA #&hellip;" autocomplete="off">
     </div>
-    <p class="search-hint">Search by any part of a name, or type an IFPA number for an exact match, then <strong>tap a result to open their full year-by-year history</strong>. Tap the <strong>+</strong> next to a result to add them to a comparison (up to 10) instead. If a name is shared by more than one player across years, they'll show up as separate results (IFPA # shown when known).</p>
+    <p class="search-hint">Search by any part of a name, or type an IFPA number for an exact match, then <strong>tap a result to open their full year-by-year history</strong>. If a name is shared by more than one player across years, they'll show up as separate results (IFPA # shown when known).</p>
+    <div class="cmp-mode-row">
+      <button type="button" class="cmp-mode-toggle" id="cmpModeBtn" aria-pressed="false">&#8646; Compare players</button>
+      <span class="cmp-mode-hint" id="cmpModeHint" hidden>Tap the <strong>+</strong> next to players to add them (up to 10).</span>
+    </div>
     <div class="example-chips" id="exampleChips">
       <span class="lbl">Try:</span>
       <div class="example-item">
@@ -467,6 +479,7 @@
   function colorFor(idx){ return idx < 8 ? COLORS[idx] : EXTRA_COLOR; }
 
   var selected = []; // person ids, in selection order == color order
+  var compareMode = false; // + toggles on result rows only render when true
 
   var searchInput = document.getElementById('searchInput');
   var resultsEl = document.getElementById('results');
@@ -483,6 +496,22 @@
   var cmpChips = document.getElementById('cmpChips');
   var cmpGoBtn = document.getElementById('cmpGoBtn');
   var cmpClearBtn = document.getElementById('cmpClearBtn');
+  var cmpModeBtn = document.getElementById('cmpModeBtn');
+  var cmpModeHint = document.getElementById('cmpModeHint');
+
+  function setCompareMode(on){
+    compareMode = on;
+    cmpModeBtn.setAttribute('aria-pressed', on ? 'true' : 'false');
+    cmpModeHint.hidden = !on;
+  }
+  cmpModeBtn.addEventListener('click', function(){
+    setCompareMode(!compareMode);
+    if (!compareMode){
+      selected = [];
+      updateTray();
+    }
+    runSearch(searchInput.value);
+  });
 
   function renderBreadcrumb(container, crumbs){
     container.innerHTML = '';
@@ -542,6 +571,7 @@
     } else if (route.view === 'compare'){
       var ids = route.ids.filter(function(id){ return ID_INDEX[id]; });
       if (ids.length >= 2){
+        setCompareMode(true); // shared compare URL: keep + toggles visible on return to search
         selected = ids.slice(0, MAX_COMPARE);
         updateTray();
         syncToggleButtons();
@@ -679,22 +709,27 @@
       rp.classList.add(cs.pct >= 50 ? 'win-good' : 'win-bad');
       btn.addEventListener('click', function(){ location.hash = playerHash(p); });
 
-      var toggle = document.createElement('button');
-      toggle.type = 'button';
-      toggle.className = 'cmp-toggle';
-      toggle.setAttribute('data-id', p.id);
-      toggle.title = 'Add to comparison';
-      var isSel = selected.indexOf(p.id) !== -1;
-      toggle.setAttribute('aria-pressed', isSel ? 'true' : 'false');
-      toggle.textContent = isSel ? '✓' : '+';
-      if (!isSel && selected.length >= MAX_COMPARE) toggle.disabled = true;
-      toggle.addEventListener('click', function(e){
-        e.stopPropagation();
-        toggleCompare(p.id);
-      });
-
       row.appendChild(btn);
-      row.appendChild(toggle);
+
+      // The + compare toggles only render in compare mode -- by default the
+      // primary search->view path stays clean with a single button per row.
+      if (compareMode){
+        var toggle = document.createElement('button');
+        toggle.type = 'button';
+        toggle.className = 'cmp-toggle';
+        toggle.setAttribute('data-id', p.id);
+        toggle.title = 'Add to comparison';
+        var isSel = selected.indexOf(p.id) !== -1;
+        toggle.setAttribute('aria-pressed', isSel ? 'true' : 'false');
+        toggle.textContent = isSel ? '✓' : '+';
+        if (!isSel && selected.length >= MAX_COMPARE) toggle.disabled = true;
+        toggle.addEventListener('click', function(e){
+          e.stopPropagation();
+          toggleCompare(p.id);
+        });
+        row.appendChild(toggle);
+      }
+
       resultsEl.appendChild(row);
     });
   }
