@@ -1,6 +1,21 @@
-<title>Pinburgh Results Lookup</title>
+<title>Pinburgh Results Lookup &mdash; every player, every session, 2014&ndash;2026</title>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Look up any Pinburgh player's year-by-year record, session-by-session charts, division finishes and finals brackets. Built from pinburgh.com's own published results, 2014&ndash;2026.">
+<link rel="canonical" href="https://pinburghresults.com/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Pinburgh Results Lookup">
+<meta property="og:url" content="https://pinburghresults.com/">
+<meta property="og:title" content="How'd you do at Pinburgh?">
+<meta property="og:description" content="Search any player from 2014&ndash;2026 and see their year-by-year record, session-by-session charts, and finals brackets.">
+<meta property="og:image" content="https://pinburghresults.com/og-image.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="How'd you do at Pinburgh?">
+<meta name="twitter:description" content="Search any player from 2014&ndash;2026 and see their year-by-year record, session-by-session charts, and finals brackets.">
+<meta name="twitter:image" content="https://pinburghresults.com/og-image.jpg">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%231B2126'/%3E%3Ccircle cx='32' cy='27' r='13' fill='%23E9EDEE'/%3E%3Ccircle cx='27' cy='22' r='4' fill='%23FFFFFF' opacity='.85'/%3E%3Crect x='16' y='46' width='32' height='6' rx='3' fill='%238FB6C6'/%3E%3C/svg%3E">
 <style>
   :root{
     --bg:#EEF0F1; --surface:#FFFFFF; --ink:#1B2126; --ink-soft:#5B6670;
@@ -111,6 +126,7 @@
   .result-btn:hover .rc{filter:brightness(1.12);}
   @media (prefers-reduced-motion: reduce){ .result-btn{transition:none;} }
   .empty-note{font-size:14px;color:var(--ink-soft);padding:10px 2px;}
+  .result-count{font-size:12px;color:var(--ink-soft);padding:2px 2px 4px;}
 
   #personView{display:none;}
   .breadcrumb{font-size:14px; margin:0 0 18px; color:var(--ink-soft);}
@@ -324,7 +340,7 @@
 
     <details class="data-notice">
       <summary>Finals bracket coverage &amp; data notes</summary>
-      <p><strong>Finals bracket data is included for: 2014 (<a href="#/bracket/2014/A">A</a>); 2015 (<a href="#/bracket/2015/A">A</a>); 2016 (<a href="#/bracket/2016/A">A</a>, <a href="#/bracket/2016/C">C</a>); 2017 (<a href="#/bracket/2017/A">A</a>, <a href="#/bracket/2017/B">B</a>, <a href="#/bracket/2017/C">C</a>, <a href="#/bracket/2017/D">D</a>); 2018 (<a href="#/bracket/2018/A">A</a>, <a href="#/bracket/2018/B">B</a>, <a href="#/bracket/2018/C">C</a>, <a href="#/bracket/2018/D">D</a>); 2019 (<a href="#/bracket/2019/A">A</a>, <a href="#/bracket/2019/B">B</a>, <a href="#/bracket/2019/C">C</a>, <a href="#/bracket/2019/D">D</a>); 2025 (<a href="#/bracket/2025/A">A</a>, <a href="#/bracket/2025/B">B</a>, <a href="#/bracket/2025/C">C</a>); 2026 (<a href="#/bracket/2026/A">A</a>, <a href="#/bracket/2026/B">B</a>, <a href="#/bracket/2026/C">C</a>).</strong>
+      <p><strong>Full finals brackets (every playoff round) are included for: 2014 (<a href="#/bracket/2014/A">A</a>); 2015 (<a href="#/bracket/2015/A">A</a>); 2016 (<a href="#/bracket/2016/A">A</a>, <a href="#/bracket/2016/C">C</a>); 2019 (<a href="#/bracket/2019/A">A</a>, <a href="#/bracket/2019/B">B</a>, <a href="#/bracket/2019/C">C</a>, <a href="#/bracket/2019/D">D</a>); 2025 (<a href="#/bracket/2025/A">A</a>, <a href="#/bracket/2025/B">B</a>, <a href="#/bracket/2025/C">C</a>); 2026 (<a href="#/bracket/2026/A">A</a>, <a href="#/bracket/2026/B">B</a>, <a href="#/bracket/2026/C">C</a>).</strong> For 2017 (<a href="#/bracket/2017/A">A</a>, <a href="#/bracket/2017/B">B</a>, <a href="#/bracket/2017/C">C</a>, <a href="#/bracket/2017/D">D</a>); 2018 (<a href="#/bracket/2018/A">A</a>, <a href="#/bracket/2018/B">B</a>, <a href="#/bracket/2018/C">C</a>, <a href="#/bracket/2018/D">D</a>) only the winning Finals foursome was recorded, not the earlier playoff rounds &mdash; players eliminated before the Finals in those years show no finals badge.
         Other years/divisions aren't scraped yet &mdash; those player pages show qualifying (Sessions 1&ndash;10)
         data only, with no finals badge or bracket detail.</p>
       <p><strong>"Day 1" and "Overall finish" are rank against the entire field</strong> (Day 1 after Session 5,
@@ -478,6 +494,7 @@
   var COLORS = ['var(--c1)','var(--c2)','var(--c3)','var(--c4)','var(--c5)','var(--c6)','var(--c7)','var(--c8)'];
   var EXTRA_COLOR = 'var(--c-extra)';
   var MAX_COMPARE = 10;
+  var MAX_RESULTS = 30;
   function colorFor(idx){ return idx < 8 ? COLORS[idx] : EXTRA_COLOR; }
 
   var selected = []; // person ids, in selection order == color order
@@ -661,7 +678,7 @@
     }
 
     var isNumeric = /^\d+$/.test(q);
-    var matches;
+    var matches, totalMatches;
 
     if (isNumeric){
       // IFPA number search: exact match first, then numbers that start with the query
@@ -673,18 +690,38 @@
         if (ifpaStr === q) exact.push(p);
         else if (ifpaStr.indexOf(q) === 0) prefix.push(p);
       }
-      matches = exact.concat(prefix).slice(0, 30);
+      var allNum = exact.concat(prefix);
+      totalMatches = allNum.length;
+      matches = allNum.slice(0, MAX_RESULTS);
     } else {
-      var starts = [], contains = [];
+      // Scan the WHOLE roster -- an early break here (previously at 40 hits)
+      // silently made people unreachable, since PEOPLE is alphabetical and the
+      // scan would bail before ever reaching later names.
+      var terms = q.split(/\s+/).filter(function(t){ return t; });
+      var starts = [], wordStarts = [], contains = [], allTerms = [];
       for (var j=0;j<PEOPLE.length;j++){
         var pp = PEOPLE[j];
         var nl = pp.name.toLowerCase();
         var idx = nl.indexOf(q);
         if (idx === 0) starts.push(pp);
+        else if (idx > 0 && nl.charAt(idx-1) === ' ') wordStarts.push(pp); // surname match
         else if (idx > 0) contains.push(pp);
-        if (starts.length + contains.length > 40) break;
+        else if (terms.length > 1 && terms.every(function(t){ return nl.indexOf(t) !== -1; })){
+          // "bob johnson" should still find "Bob S Johnson" -- a plain substring
+          // test misses any name carrying a middle initial or second surname.
+          allTerms.push(pp);
+        }
       }
-      matches = starts.concat(contains).slice(0, 30);
+      // Within each relevance tier, surface the players with the most
+      // Pinburghs first -- a decent proxy for "who was probably meant".
+      function byProminence(a, b){
+        return b.years.length - a.years.length || a.name.localeCompare(b.name);
+      }
+      starts.sort(byProminence); wordStarts.sort(byProminence);
+      contains.sort(byProminence); allTerms.sort(byProminence);
+      var ranked = starts.concat(wordStarts, contains, allTerms);
+      totalMatches = ranked.length;
+      matches = ranked.slice(0, MAX_RESULTS);
     }
 
     if (matches.length === 0){
@@ -696,6 +733,15 @@
       resultsEl.appendChild(note);
       return;
     }
+
+    if (totalMatches > matches.length){
+      var more = document.createElement('div');
+      more.className = 'result-count';
+      more.textContent = 'Showing the ' + matches.length + ' most-played of ' + totalMatches +
+        ' matches — keep typing to narrow it down.';
+      resultsEl.appendChild(more);
+    }
+
     matches.forEach(function(p){
       var row = document.createElement('div');
       row.className = 'result-row';
